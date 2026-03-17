@@ -17,6 +17,7 @@ Modular Physical Frame - Emma
   Grabber Effectors
   Arm Base (not actual arm, too dynamic)
   LiDAR Mount (not full software) 
+  Breadboard mounts
 Power and Core Functionality - Alexis 
 OS/ROS Setup on Pi - Rohith
 Gazeebo Sim Profile - Rohith
