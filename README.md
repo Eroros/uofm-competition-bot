@@ -7,12 +7,12 @@ Personal workspace for a 4-wheel skid-steer competition robot running on Raspber
 
 | Component | Details |
 |---|---|
-| SBC | Raspberry Pi 4 / 5 |
+| SBC | Raspberry Pi 4 Model B |
 | LiDAR | 2D LiDAR (e.g. RPLidar A1/A2) on `/scan` |
 | Drive motors | 4× DC motor — skid-steer layout |
 | Motor drivers | 2× TB6612FNG (front pair + rear pair) |
 | Effector servos | 3× DSServo — 2 paddle, 1 crank (3D printed) |
-| Odometry | Wheel encoder via motor driver feedback |
+| Odometry | IMU + EKF localization |
 
 ## Package Layout
 
@@ -49,24 +49,42 @@ ros2 launch robot_bringup sim.launch.py
 ### TB6612FNG — Front Driver (motors FL + FR)
 | Signal | RPi GPIO (BCM) |
 |---|---|
-| PWMA (FL speed) | 2 |
-| AIN1 (FL dir)   | 22 |
-| AIN2 (FL dir)   | 23 |
-| PWMB (FR speed) | 3 |
-| BIN1 (FR dir)   | 24 |
-| BIN2 (FR dir)   | 25 |
-| STBY            | 30 |
+| PWMA (FL speed) | 32 |
+| AIN1 (FL dir)   | 29 |
+| AIN2 (FL dir)   | 31 |
+| PWMB (FR speed) | 33 |
+| BIN1 (FR dir)   | 35 |
+| BIN2 (FR dir)   | 37 |
+| STBY            | 40 |
+| VCC             | 17 |
+| VIN to 12V rail |
+| GND             | 39 |
 
 ### TB6612FNG — Rear Driver (motors RL + RR)
 | Signal | RPi GPIO (BCM) |
 |---|---|
-| PWMA (RL speed) | 4 |
-| AIN1 (RL dir)   | 26  |
-| AIN2 (RL dir)   | 27 |
-| PWMB (RR speed) | 5 |
-| BIN1 (RR dir)   | 28 |
-| BIN2 (RR dir)   | 29 |
-| STBY            | 31 |
+| PWMA (RL speed) | 12 |
+| AIN1 (RL dir)   | 11  |
+| AIN2 (RL dir)   | 13 |
+| PWMB (RR speed) | 22 |
+| BIN1 (RR dir)   | 15 |
+| BIN2 (RR dir)   | 18 |
+| STBY            | 38 |
+| VCC             | 17 |
+| VIN to 12V rail |
+| GND             | 39 |
+
+## IMU - Odometry 
+| VCC             | 1 |
+| GND             | 6 |
+| SCL             | 5 |
+| SDA             | 3 |
+| EDA X               |
+| ECL X               |
+| ADO             | 6 |
+| (optional) INT  | 11 |
+| NCS             | 1 |
+| FSYNC X             |
 
 ### DSServo — Effectors
 | Servo | RPi GPIO (BCM) | Default angle |
