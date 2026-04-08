@@ -39,10 +39,9 @@ Antenna orientations (what face the robot must align to):
 ## Installation (Pi 5 / Pi 4 with Ubuntu 22.04 + ROS 2 Humble)
 
 ```bash
-# 1. Create workspace
-mkdir -p ~/secon26_ws/src
-cd ~/secon26_ws/src
-# copy this package here
+# 1. Clone repo
+git clone https://github.com/swagmaster9000-com/pi-ros2-robot.git ~/pi-ros2-robot
+cd ~/pi-ros2-robot
 
 # 2. Install dependencies
 sudo apt update
@@ -56,9 +55,6 @@ sudo apt install -y \
   ros-humble-ros-gz-sim \
   ros-humble-tf2-ros \
   ros-humble-robot-localization
-
-git clone https://github.com/swagmaster9000-com/pi-ros2-robot.git ~/pi-ros2-robot
-cd ~/pi-ros2-robot
 
 # 3. Build
 colcon build --symlink-install
