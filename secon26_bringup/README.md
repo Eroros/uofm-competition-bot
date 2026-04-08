@@ -57,8 +57,10 @@ sudo apt install -y \
   ros-humble-tf2-ros \
   ros-humble-robot-localization
 
+git clone https://github.com/swagmaster9000-com/pi-ros2-robot.git ~/pi-ros2-robot
+cd ~/pi-ros2-robot
+
 # 3. Build
-cd ~/secon26_ws
 colcon build --symlink-install
 source install/setup.bash
 ```
