@@ -19,8 +19,8 @@ As you work, we invite you to fork and expand this repo, so you can hand on your
   * LiDAR Mount (not full software) 
   * Breadboard mounts
 * Power and Core Functionality - Alexis 
-* OS/ROS Setup on Pi - Rohith
-* Gazeebo Sim Profile - Rohith
+* OS/ROS Setup on Pi - Michelle/Rohith
+* Gazeebo Sim Profile - Michelle
 * Docs and Tutorials - All! But Michelle especially
 * Add-on / Multipurpose Modules - Emma
-* Rivision Procedure - Michelle
+* Revision Procedure - Michelle
