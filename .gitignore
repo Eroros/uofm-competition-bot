@@ -49,3 +49,33 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+# ROS2 build artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Gazebo logs
+/gazebo_logs/
+
+# colcon
+.colcon_workspace
+
+# Generated URDF
+*.urdf.generated
+
+# Pi-specific
+*.pyc
+.env
