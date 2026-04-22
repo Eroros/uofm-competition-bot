@@ -1,0 +1,35 @@
+# Robot Competition Project - Python Dependencies
+# Note: This is an approximation. Many packages are ROS2-specific and require
+# a full ROS2 installation. This file captures pip-installable dependencies.
+
+# Core ROS2 Packages
+rclpy
+launch
+launch_ros
+ament_index_python
+
+# ROS2 Message & Service Definitions
+geometry_msgs
+nav_msgs
+sensor_msgs
+std_msgs
+std_srvs
+action_msgs
+nav2_msgs
+
+# Robot-Specific Libraries
+xacro
+PyYAML
+
+# Hardware Drivers (Raspberry Pi)
+RPi.GPIO
+pigpio
+smbus2
+
+# Standard Library Utilities
+# (included below for reference, but are built-in)
+# math - stdlib
+# os - stdlib
+# time - stdlib
+# threading - stdlib
+# struct - stdlib
