@@ -5,17 +5,17 @@ test_motors_and_servos.py
 Standalone test script (no ROS) for all motors and servos on the robot.
 Tests each motor and servo sequentially to verify hardware connections.
 
-GPIO pin map (BCM numbering):
+GPIO pin map (BCM numbering) — from tb6612_driver.py & dsservo_driver.py:
   Front TB6612FNG (motors FL & FR):
-    FL: PWM=12, AIN1=23, AIN2=24 | FR: PWM=13, BIN1=20, BIN2=21 | STBY=25
+    FL: PWM=12, IN1=5, IN2=6   | FR: PWM=13, IN1=19, IN2=26 | STBY=21
   
   Rear TB6612FNG (motors RL & RR):
-    RL: PWM=18, AIN1=5, AIN2=6   | RR: PWM=19, BIN1=16, BIN2=26 | STBY=22
+    RL: PWM=18, IN1=17, IN2=27 | RR: PWM=25, IN1=22, IN2=24 | STBY=20
   
   DSServos:
-    Paddle Left:  pin 17
-    Paddle Right: pin 27
-    Crank:        pin 4
+    Paddle Left:  pin 23
+    Paddle Right: pin 16
+    Crank:        pin 7
 
 Each motor is tested forward → reverse → stop.
 Each servo sweeps from 0° → 90° → 180° → 90° → 0°.
@@ -246,15 +246,15 @@ def main():
         print("\n[STEP 1] Initializing motor drivers...")
         front_driver = TB6612Driver(
             "Front TB6612FNG",
-            pwm_a=12, ain1=23, ain2=24,  # Front-Left
-            pwm_b=13, bin1=20, bin2=21,  # Front-Right
-            stby=25
+            pwm_a=12, ain1=5, ain2=6,    # Front-Left
+            pwm_b=13, bin1=19, bin2=26,  # Front-Right
+            stby=21
         )
         rear_driver = TB6612Driver(
             "Rear TB6612FNG",
-            pwm_a=18, ain1=5, ain2=6,    # Rear-Left
-            pwm_b=19, bin1=16, bin2=26,  # Rear-Right
-            stby=22
+            pwm_a=18, ain1=17, ain2=27,  # Rear-Left
+            pwm_b=25, bin1=22, bin2=24,  # Rear-Right
+            stby=20
         )
         
         front_driver.setup()
@@ -262,9 +262,9 @@ def main():
         
         # ─── Create servo instances ────────────────────────────────────────
         print("\n[STEP 2] Initializing servos...")
-        paddle_left = DSServoController("Paddle Left", pin=17)
-        paddle_right = DSServoController("Paddle Right", pin=27)
-        crank = DSServoController("Crank", pin=4)
+        paddle_left = DSServoController("Paddle Left", pin=23)
+        paddle_right = DSServoController("Paddle Right", pin=16)
+        crank = DSServoController("Crank", pin=7)
         
         paddle_left.setup()
         paddle_right.setup()
