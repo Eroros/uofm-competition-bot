@@ -5,17 +5,19 @@ test_motors_and_servos.py
 Standalone test script (no ROS) for all motors and servos on the robot.
 Tests each motor and servo sequentially to verify hardware connections.
 
-GPIO pin map (BCM numbering) — from tb6612_driver.py & dsservo_driver.py:
+GPIO pin map (BCM numbering) — from pinout.txt (physical pins 1-40):
   Front TB6612FNG (motors FL & FR):
-    FL: PWM=12, IN1=5, IN2=6   | FR: PWM=13, IN1=19, IN2=26 | STBY=21
+    FL: PWM=12 (pin 32), IN1=5 (pin 29), IN2=6 (pin 31)
+    FR: PWM=13 (pin 33), IN1=19 (pin 35), IN2=26 (pin 37) | STBY=21 (pin 40)
   
   Rear TB6612FNG (motors RL & RR):
-    RL: PWM=18, IN1=17, IN2=27 | RR: PWM=25, IN1=22, IN2=24 | STBY=20
+    RL: PWM=18 (pin 12), IN1=17 (pin 11), IN2=27 (pin 13)
+    RR: PWM=25 (pin 22), IN1=22 (pin 15), IN2=24 (pin 18) | STBY=20 (pin 38)
   
   DSServos:
-    Paddle Left:  pin 23
-    Paddle Right: pin 16
-    Crank:        pin 7
+    Paddle Left:  GPIO 23 (pin 16)
+    Paddle Right: GPIO 16 (pin 36)
+    Crank:        GPIO 7 (pin 26)
 
 Each motor is tested forward → reverse → stop.
 Each servo sweeps from 0° → 90° → 180° → 90° → 0°.
