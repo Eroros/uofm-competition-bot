@@ -14,6 +14,7 @@
   <exec_depend>robot_drivers</exec_depend>
   <exec_depend>robot_effectors</exec_depend>
   <exec_depend>robot_simulation</exec_depend>
+  <exec_depend>gamepad_controller</exec_depend>
   <exec_depend>ros2launch</exec_depend>
 
   <export>

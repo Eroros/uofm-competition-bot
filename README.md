@@ -42,6 +42,28 @@ ROS 2 Humble.
 | Sonar | Front-facing — duck proximity detection |
 | IR | TX/RX unit — Earth communications (rulebook requirement) |
 
+## Remote Gamepad Control
+
+**New in 2026:** Remote gamepad controller for testing and manual operation.
+
+- Run the robot stack on **Raspberry Pi**
+- Run gamepad node on **development PC (Windows/WSL, Linux, or Mac)**
+- Automatic network discovery via ROS2 DDS
+- Real-time `/cmd_vel` commands over local network
+
+**Quick start:**
+```bash
+# Pi: Full robot stack
+ros2 launch robot_bringup robot.launch.py use_nav:=false
+
+# WSL/Dev PC: Gamepad controller
+ros2 run gamepad_controller gamepad_controller
+```
+
+See [GAMEPAD_QUICK_START.md](GAMEPAD_QUICK_START.md) and [GAMEPAD_LAUNCH_GUIDE.md](GAMEPAD_LAUNCH_GUIDE.md) for detailed instructions.
+
+---
+
 ## GPIO Pin Map (BCM)
 
 ### TB6612FNG Driver 1 — Front wheels
