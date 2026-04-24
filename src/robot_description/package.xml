@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <n>robot_description</n>
+  <name>robot_description</name>
   <version>0.1.0</version>
   <description>URDF/Xacro model for the 4-wheel skid-steer competition robot with LiDAR and servo effectors.</description>
   <maintainer email="you@example.com">Your Name</maintainer>
