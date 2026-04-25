@@ -37,6 +37,10 @@ def generate_launch_description():
         "use_rviz", default_value="true",
         description="Launch RViz2",
     )
+    use_effectors_arg = DeclareLaunchArgument(
+        "use_effectors", default_value="true",
+        description="Launch effector servo stack",
+    )
     max_linear_speed_arg = DeclareLaunchArgument(
         "max_linear_speed", default_value="1.0",
         description="Max gamepad linear speed (m/s)",
@@ -68,6 +72,8 @@ def generate_launch_description():
                 [FindPackageShare("robot_effectors"), "launch", "effectors.launch.py"]
             )
         )
+        ,
+        condition=IfCondition(LaunchConfiguration("use_effectors")),
     )
 
     gamepad_launch = IncludeLaunchDescription(
@@ -98,6 +104,7 @@ def generate_launch_description():
     return LaunchDescription([
         use_nav_arg,
         use_rviz_arg,
+        use_effectors_arg,
         max_linear_speed_arg,
         max_angular_speed_arg,
         description_launch,

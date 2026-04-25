@@ -28,6 +28,10 @@ def generate_launch_description():
         "use_nav", default_value="true",
         description="Launch Nav2 navigation stack",
     )
+    use_effectors_arg = DeclareLaunchArgument(
+        "use_effectors", default_value="true",
+        description="Launch effector servo stack",
+    )
     use_rviz_arg = DeclareLaunchArgument(
         "use_rviz", default_value="true",
         description="Launch RViz2",
@@ -55,6 +59,8 @@ def generate_launch_description():
                 [FindPackageShare("robot_effectors"), "launch", "effectors.launch.py"]
             )
         )
+        ,
+        condition=IfCondition(LaunchConfiguration("use_effectors")),
     )
 
     nav_launch = IncludeLaunchDescription(
@@ -72,6 +78,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         use_nav_arg,
+        use_effectors_arg,
         use_rviz_arg,
         description_launch,
         drivers_launch,
