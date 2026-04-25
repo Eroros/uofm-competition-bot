@@ -16,6 +16,9 @@ def generate_launch_description():
                 {'max_linear_speed': 1.0},      # m/s
                 {'max_angular_speed': 2.0},     # rad/s
                 {'deadzone': 0.1},              # Stick deadzone
+                {'use_tcp_input': False},
+                {'tcp_listen_host': '0.0.0.0'},
+                {'tcp_listen_port': 5005},
             ]
         )
     ])

@@ -28,6 +28,8 @@ Parameters (configurable via launch file):
 """
 
 import math
+import json
+import socket
 import threading
 import rclpy
 from rclpy.node import Node
@@ -153,12 +155,18 @@ class GamepadControllerNode(Node):
         self.declare_parameter('max_linear_speed', 1.0)
         self.declare_parameter('max_angular_speed', 2.0)
         self.declare_parameter('deadzone', 0.1)
+        self.declare_parameter('tcp_listen_host', '0.0.0.0')
+        self.declare_parameter('tcp_listen_port', 5005)
+        self.declare_parameter('use_tcp_input', False)
         
         # Get parameters
         self.cmd_vel_topic = self.get_parameter('cmd_vel_topic').value
         self.max_linear = self.get_parameter('max_linear_speed').value
         self.max_angular = self.get_parameter('max_angular_speed').value
         deadzone = self.get_parameter('deadzone').value
+        self.tcp_listen_host = self.get_parameter('tcp_listen_host').value
+        self.tcp_listen_port = int(self.get_parameter('tcp_listen_port').value)
+        self.use_tcp_input = bool(self.get_parameter('use_tcp_input').value)
         
         # Publisher
         self.cmd_vel_pub = self.create_publisher(Twist, self.cmd_vel_topic, 10)
@@ -166,9 +174,18 @@ class GamepadControllerNode(Node):
         # Gamepad state
         self.gamepad = GamepadReader(deadzone=deadzone)
         self.enabled = True
+        self._last_tcp_cmd = None
         
-        # Start gamepad input thread
-        if INPUTS_AVAILABLE:
+        if self.use_tcp_input:
+            self.tcp_thread = threading.Thread(
+                target=self.tcp_input_thread,
+                daemon=True,
+            )
+            self.tcp_thread.start()
+            self.get_logger().info(
+                f"TCP input listener started on {self.tcp_listen_host}:{self.tcp_listen_port}"
+            )
+        elif INPUTS_AVAILABLE:
             self.reader_thread = threading.Thread(
                 target=gamepad_input_thread,
                 args=(self.gamepad, self),
@@ -191,6 +208,71 @@ class GamepadControllerNode(Node):
             f"Use: Left stick Y for speed, Right stick X for turn\n"
             f"     Press B to emergency stop, A to toggle enable"
         )
+
+    def tcp_input_thread(self):
+        """Listen for newline-delimited JSON commands and publish Twist."""
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((self.tcp_listen_host, self.tcp_listen_port))
+        server.listen(1)
+        server.settimeout(1.0)
+
+        self.get_logger().info("Waiting for TCP gamepad stream connection...")
+        client = None
+        try:
+            while rclpy.ok():
+                if client is None:
+                    try:
+                        client, addr = server.accept()
+                        client.settimeout(1.0)
+                        self.get_logger().info(f"TCP client connected from {addr[0]}:{addr[1]}")
+                    except socket.timeout:
+                        continue
+
+                try:
+                    data = client.recv(1024)
+                    if not data:
+                        self.get_logger().info("TCP client disconnected")
+                        client.close()
+                        client = None
+                        continue
+
+                    for raw_line in data.decode("utf-8", errors="ignore").splitlines():
+                        raw_line = raw_line.strip()
+                        if not raw_line:
+                            continue
+                        self.handle_tcp_command(raw_line)
+                except socket.timeout:
+                    continue
+                except OSError as exc:
+                    self.get_logger().warn(f"TCP receive error: {exc}")
+                    if client is not None:
+                        client.close()
+                    client = None
+        finally:
+            if client is not None:
+                client.close()
+            server.close()
+
+    def handle_tcp_command(self, raw_line: str):
+        """Parse a JSON command payload and publish Twist."""
+        try:
+            msg = json.loads(raw_line)
+            if not isinstance(msg, dict):
+                raise ValueError("payload must be a JSON object")
+        except Exception as exc:
+            self.get_logger().warn(f"Bad TCP command ignored: {exc}")
+            return
+
+        linear = float(msg.get("linear", 0.0))
+        angular = float(msg.get("angular", 0.0))
+
+        twist = Twist()
+        twist.linear.x = linear
+        twist.angular.z = angular
+        self.cmd_vel_pub.publish(twist)
+        self._last_tcp_cmd = raw_line
+        self.get_logger().info(f"TCP cmd_vel published: {raw_line}")
     
     def control_callback(self):
         """Main control loop: read gamepad, publish Twist."""
