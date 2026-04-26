@@ -1,3 +1,5 @@
+build.backup/
+install.backup/
 devel/
 .venv-win/
 logs/
