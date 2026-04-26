@@ -1,29 +1,29 @@
 # tb6612_config.yaml
 # GPIO pin assignments and physical parameters for the TB6612FNG motor drivers.
-# All GPIO numbers are BCM (Broadcom) numbering.
+# All GPIO numbers are BCM numbering.
 
 tb6612_motor_driver_node:
   ros__parameters:
 
     # Physical robot dimensions
-    wheel_base_width: 0.29      # metres — lateral distance between left and right wheels
-    wheel_radius:     0.045     # metres
-    max_speed:        0.5       # m/s
+    wheel_base_width: 0.29
+    wheel_radius:     0.045
+    max_speed:        0.5
 
-    # ── Front TB6612FNG (drives FL + FR motors) ──────────────────────────
-    front_pwm_a: 12   # PWM  → Front-Left  motor speed
-    front_ain1:  23   # AIN1 → Front-Left  direction
-    front_ain2:  24   # AIN2 → Front-Left  direction
-    front_pwm_b: 13   # PWM  → Front-Right motor speed
-    front_bin1:  20   # BIN1 → Front-Right direction
-    front_bin2:  21   # BIN2 → Front-Right direction
-    front_stby:  25   # STBY → enable chip (HIGH = enabled)
+    # Front TB6612FNG, same BCM map as quick_motor_test.py and README.
+    front_pwm_a: 12   # Front-left PWM, physical pin 32
+    front_ain1:   5   # Front-left IN1, physical pin 29
+    front_ain2:   6   # Front-left IN2, physical pin 31
+    front_pwm_b: 13   # Front-right PWM, physical pin 33
+    front_bin1:  19   # Front-right IN1, physical pin 35
+    front_bin2:  26   # Front-right IN2, physical pin 37
+    front_stby:  21   # Front driver STBY, physical pin 40
 
-    # ── Rear TB6612FNG (drives RL + RR motors) ───────────────────────────
-    rear_pwm_a:  18   # PWM  → Rear-Left  motor speed
-    rear_ain1:    5   # AIN1 → Rear-Left  direction
-    rear_ain2:    6   # AIN2 → Rear-Left  direction
-    rear_pwm_b:  19   # PWM  → Rear-Right motor speed
-    rear_bin1:   16   # BIN1 → Rear-Right direction
-    rear_bin2:   26   # BIN2 → Rear-Right direction
-    rear_stby:   22   # STBY → enable chip (HIGH = enabled)
+    # Rear TB6612FNG, same BCM map as quick_motor_test.py and README.
+    rear_pwm_a:  18   # Rear-left PWM, physical pin 12
+    rear_ain1:   17   # Rear-left IN1, physical pin 11
+    rear_ain2:   27   # Rear-left IN2, physical pin 13
+    rear_pwm_b:  25   # Rear-right PWM, physical pin 22
+    rear_bin1:   22   # Rear-right IN1, physical pin 15
+    rear_bin2:   24   # Rear-right IN2, physical pin 18
+    rear_stby:   20   # Rear driver STBY, physical pin 38
