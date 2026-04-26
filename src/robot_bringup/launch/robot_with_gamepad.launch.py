@@ -25,6 +25,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -89,19 +90,19 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration("use_effectors")),
     )
 
-    gamepad_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [FindPackageShare("gamepad_controller"), "launch", "gamepad_controller.launch.py"]
-            )
-        ),
-        launch_arguments={
-            "max_linear_speed":  LaunchConfiguration("max_linear_speed"),
+    gamepad_node = Node(
+        package="gamepad_controller",
+        executable="gamepad_controller",
+        name="gamepad_controller",
+        output="screen",
+        parameters=[{
+            "cmd_vel_topic": "/cmd_vel",
+            "max_linear_speed": LaunchConfiguration("max_linear_speed"),
             "max_angular_speed": LaunchConfiguration("max_angular_speed"),
-            "use_tcp_input":     LaunchConfiguration("use_tcp_input"),
-            "tcp_listen_host":   LaunchConfiguration("tcp_listen_host"),
-            "tcp_listen_port":   LaunchConfiguration("tcp_listen_port"),
-        }.items(),
+            "use_tcp_input": LaunchConfiguration("use_tcp_input"),
+            "tcp_listen_host": LaunchConfiguration("tcp_listen_host"),
+            "tcp_listen_port": LaunchConfiguration("tcp_listen_port"),
+        }],
     )
 
     nav_launch = IncludeLaunchDescription(
@@ -129,6 +130,6 @@ def generate_launch_description():
         description_launch,
         drivers_launch,
         effectors_launch,
-        gamepad_launch,
+        gamepad_node,
         nav_launch,
     ])
