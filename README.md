@@ -1,30 +1,30 @@
 # uofm-competition-bot
-A general "starter kit" for The University of Mempihs robotics competitions. 
 
-There is a wiki attatched to this project which includes things in depth. THis readme.md is a high-level overview. 
+A starter kit for University of Memphis robotics competitions.
 
-This is a starter kit for a modular robot base to add onto for competitions. While this is open to other schools (?), this is for The University of Memphis EECE department. The physical robot is also included with this document, but all products, files, and code is included in this repo to fully reproduce the robot. 
+This repository contains the ROS 2 robot stack, hardware notes, simulation assets,
+remote/manual control tools, and starter documentation needed to reproduce and
+extend the competition robot. The goal is to make each year's work easy to hand
+off to the next team.
 
-https://github.com/Eroros/uofm-competition-bot/wiki wiki link. 
+Project wiki: https://github.com/Eroros/uofm-competition-bot/wiki
 
-As you work, we invite you to fork and expand this repo, so you can hand on your work to the next year and they do so as well. The 2026 team faced a lack of institutional ability for these competitions - this is our attempt to remedy that. 
+## Project Goals
 
-* TEMP - Project Goals
-* Modular Physical Frame - Emma
-  * Initial set of modules:
-  * Sensor Skirt / Side Attachements
-  * Arduino Board
-  * Grabber Effectors
-  * Arm Base (not actual arm, too dynamic)
-  * LiDAR Mount (not full software) 
-  * Breadboard mounts
-* Power and Core Functionality - Alexis 
-* OS/ROS Setup on Pi - Michelle/Rohith
-* Gazeebo Sim Profile - Michelle
-* Docs and Tutorials - All! But Michelle especially
-* Add-on / Multipurpose Modules - Emma
-* Revision Procedure - Michelle
-# secon26_bringup — IEEE SoutheastCon 2026 Robot Stack
+- Modular physical frame
+- Sensor skirt / side attachments
+- Arduino board mounting
+- Grabber and antenna task effectors
+- Arm base mounting
+- LiDAR mount
+- Breadboard and electronics mounting
+- Power and core functionality
+- Raspberry Pi OS / ROS setup
+- Gazebo simulation profile
+- Docs, tutorials, and revision procedure
+- Add-on / multipurpose modules
+
+# IEEE SoutheastCon 2026 Robot Stack
 
 Autonomous navigation stack for a 4-wheel skid-steer robot competing in the
 IEEE SoutheastCon 2026 Hardware Competition. Runs on Raspberry Pi 4 with
@@ -42,25 +42,118 @@ ROS 2 Humble.
 | Sonar | Front-facing — duck proximity detection |
 | IR | TX/RX unit — Earth communications (rulebook requirement) |
 
-## Remote Gamepad Control
+## Manual and Remote Control
 
-**New in 2026:** Remote gamepad controller for testing and manual operation.
+The current manual-control featureset supports two paths:
 
-- Run the robot stack on **Raspberry Pi**
-- Run gamepad node on **development PC (Windows/WSL, Linux, or Mac)**
-- Automatic network discovery via ROS2 DDS
-- Real-time `/cmd_vel` commands over local network
+- ROS gamepad mode: a ROS 2 node reads a local XInput-style controller and
+  publishes `geometry_msgs/Twist` on `/cmd_vel`.
+- TCP command mode: the Pi runs a TCP receiver inside the same ROS 2 node, and
+  another computer runs `tcp_cmd_sender.py` to send simple JSON velocity
+  commands.
 
-**Quick start:**
+### Option A: ROS gamepad mode
+
+Use this when the controller is attached to the same machine that is running the
+`gamepad_controller` ROS node.
+
 ```bash
-# Pi: Full robot stack
-ros2 launch robot_bringup robot.launch.py use_nav:=false
+# Pi or dev machine: start the robot stack with local gamepad input
+ros2 launch robot_bringup robot_with_gamepad.launch.py use_nav:=false
 
-# WSL/Dev PC: Gamepad controller
+# Or run only the gamepad publisher
 ros2 run gamepad_controller gamepad_controller
 ```
 
-See [GAMEPAD_QUICK_START.md](GAMEPAD_QUICK_START.md) and [GAMEPAD_LAUNCH_GUIDE.md](GAMEPAD_LAUNCH_GUIDE.md) for detailed instructions.
+Controls:
+
+| Control | Action |
+|---------|--------|
+| Left stick Y | Forward/backward speed |
+| Right stick X | Turn left/right |
+| A | Toggle enabled/disabled |
+| B | Emergency stop |
+
+### Option B: TCP sender and receiver
+
+Use this when you want a very small transport test, or when the gamepad/sender
+computer is not running ROS 2. The receiver converts TCP JSON into `/cmd_vel`.
+
+Start the receiver on the Raspberry Pi:
+
+```bash
+cd ~/secon26_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+
+# Robot hardware stack plus TCP receiver -> /cmd_vel
+ros2 launch robot_bringup robot_with_gamepad.launch.py \
+  use_nav:=false \
+  use_tcp_input:=true \
+  tcp_listen_host:=0.0.0.0 \
+  tcp_listen_port:=5005
+```
+
+To run only the TCP receiver without the rest of the robot bringup:
+
+```bash
+ros2 launch gamepad_controller gamepad_controller.launch.py \
+  use_tcp_input:=true \
+  tcp_listen_host:=0.0.0.0 \
+  tcp_listen_port:=5005
+```
+
+After pulling changes that affect launch files, rebuild and re-source before
+launching:
+
+```bash
+cd ~/secon26_ws
+colcon build --symlink-install --packages-select gamepad_controller robot_bringup
+source install/setup.bash
+```
+
+Run the sender from this repository on your laptop/dev PC:
+
+```bash
+cd uofm-competition-bot
+
+# Interactive keyboard commands: forward, back, left, right, stop, quit
+python tcp_cmd_sender.py --host <PI_IP_ADDRESS> --port 5005
+
+# Send one preset command and exit
+python tcp_cmd_sender.py --host <PI_IP_ADDRESS> --port 5005 --once forward
+python tcp_cmd_sender.py --host <PI_IP_ADDRESS> --port 5005 --once stop
+
+# Send live gamepad commands over TCP
+pip install inputs
+python tcp_cmd_sender.py --host <PI_IP_ADDRESS> --port 5005 --gamepad
+```
+
+If the sender prints `connection refused`, the IP is reachable but nothing is
+listening on port `5005`. Start the TCP receiver first, check that it logs
+`TCP input listener started`, and pass the receiver machine's IP with `--host`.
+
+The TCP payload is one JSON object per line:
+
+```json
+{"linear":0.15,"angular":0.0}
+```
+
+Interactive sender commands:
+
+| Command | Payload |
+|---------|---------|
+| `forward` | `{"linear":0.15,"angular":0.0}` |
+| `back` | `{"linear":-0.15,"angular":0.0}` |
+| `left` | `{"linear":0.0,"angular":0.5}` |
+| `right` | `{"linear":0.0,"angular":-0.5}` |
+| `stop` | `{"linear":0.0,"angular":0.0}` |
+
+You can also type raw JSON in the sender prompt, for example:
+
+```json
+{"linear":0.10,"angular":-0.25}
+```
 
 ---
 
@@ -108,28 +201,20 @@ See [GAMEPAD_QUICK_START.md](GAMEPAD_QUICK_START.md) and [GAMEPAD_LAUNCH_GUIDE.m
 ## Package Layout
 
 ```
-secon26_bringup/
-├── launch/
-│   ├── stage1_sensors_launch.py       # RPLidar, IMU, RSP
-│   ├── stage2_localization_launch.py  # Motors, EKF, SLAM
-│   ├── stage3_navigation_launch.py    # Nav2 stack
-│   ├── stage4_mission_launch.py       # Servos, mission controller
-│   ├── secon26_master_launch.py       # All stages in sequence
-│   ├── secon26_hw_launch.py           # Legacy single launch
-│   └── secon26_sim_launch.py          # Gazebo simulation
-├── config/
-│   ├── slam_toolbox_params.yaml       # SLAM configuration
-│   ├── nav2_params.yaml               # Nav2 configuration
-│   └── ekf_params.yaml                # EKF fusion configuration
-├── scripts/
-│   ├── tb6612_driver.py               # Motor driver node
-│   ├── mpu9250_driver.py              # IMU driver node
-│   └── dsservo_driver.py              # Servo driver node
-├── urdf/
-│   └── secon26_bot.urdf               # 4-wheel skid-steer robot model
-├── worlds/
-│   └── secon26_arena.world            # Gazebo arena simulation
-└── secon26_mission_controller.py      # Autonomous mission sequencer
+uofm-competition-bot/
+|-- tcp_cmd_sender.py                  # Non-ROS TCP sender for manual tests
+|-- quick_motor_test.py                # Direct motor smoke test
+|-- quick_servo_test.py                # Direct servo smoke test
+|-- src/
+|   |-- robot_bringup/                 # Combined robot launch files
+|   |-- robot_description/             # URDF/xacro robot model
+|   |-- robot_drivers/                 # TB6612 motor driver ROS package
+|   |-- robot_effectors/               # Paddle and crank servo controllers
+|   |-- robot_navigation/              # Nav2, waypoints, mission helpers
+|   |-- robot_simulation/              # Gazebo world and sim package
+|   |-- gamepad_controller/            # ROS gamepad node and TCP receiver
+|   |-- secon26_bringup/               # Legacy/staged SoutheastCon bringup
+|   `-- sllidar_ros2/                  # RPLidar ROS 2 driver
 ```
 
 ---
@@ -154,19 +239,13 @@ sudo apt install -y \
   ros-humble-robot-localization \
   python3-smbus2
 
-pip install RPi.GPIO
+pip install RPi.GPIO inputs
 
 # 3. Clone and build
-git clone https://github.com/swagmaster9000-com/pi-ros2-robot.git ~/pi-ros2-robot
-mkdir -p ~/secon26_ws/src
-cp -r ~/pi-ros2-robot/secon26_bringup ~/secon26_ws/src/
-mkdir -p ~/secon26_ws/src/secon26_bringup/maps
-mkdir -p ~/secon26_ws/src/secon26_bringup/secon26_bringup
-touch ~/secon26_ws/src/secon26_bringup/secon26_bringup/__init__.py
-
+git clone https://github.com/Eroros/uofm-competition-bot.git ~/secon26_ws
 cd ~/secon26_ws
 source /opt/ros/humble/setup.bash
-colcon build --symlink-install --packages-select secon26_bringup
+colcon build --symlink-install
 source install/setup.bash
 ```
 

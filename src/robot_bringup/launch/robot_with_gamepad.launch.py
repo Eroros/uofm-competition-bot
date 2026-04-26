@@ -17,6 +17,7 @@ Usage:
   ros2 launch robot_bringup robot_with_gamepad.launch.py
   ros2 launch robot_bringup robot_with_gamepad.launch.py use_nav:=false
   ros2 launch robot_bringup robot_with_gamepad.launch.py max_linear_speed:=0.5
+  ros2 launch robot_bringup robot_with_gamepad.launch.py use_nav:=false use_tcp_input:=true
 """
 
 from launch import LaunchDescription
@@ -48,6 +49,18 @@ def generate_launch_description():
     max_angular_speed_arg = DeclareLaunchArgument(
         "max_angular_speed", default_value="2.0",
         description="Max gamepad angular speed (rad/s)",
+    )
+    use_tcp_input_arg = DeclareLaunchArgument(
+        "use_tcp_input", default_value="false",
+        description="Listen for newline-delimited TCP JSON commands instead of local gamepad input",
+    )
+    tcp_listen_host_arg = DeclareLaunchArgument(
+        "tcp_listen_host", default_value="0.0.0.0",
+        description="TCP host/interface for remote command input",
+    )
+    tcp_listen_port_arg = DeclareLaunchArgument(
+        "tcp_listen_port", default_value="5005",
+        description="TCP port for remote command input",
     )
 
     description_launch = IncludeLaunchDescription(
@@ -85,6 +98,9 @@ def generate_launch_description():
         launch_arguments={
             "max_linear_speed":  LaunchConfiguration("max_linear_speed"),
             "max_angular_speed": LaunchConfiguration("max_angular_speed"),
+            "use_tcp_input":     LaunchConfiguration("use_tcp_input"),
+            "tcp_listen_host":   LaunchConfiguration("tcp_listen_host"),
+            "tcp_listen_port":   LaunchConfiguration("tcp_listen_port"),
         }.items(),
     )
 
@@ -107,6 +123,9 @@ def generate_launch_description():
         use_effectors_arg,
         max_linear_speed_arg,
         max_angular_speed_arg,
+        use_tcp_input_arg,
+        tcp_listen_host_arg,
+        tcp_listen_port_arg,
         description_launch,
         drivers_launch,
         effectors_launch,
