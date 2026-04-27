@@ -45,8 +45,8 @@ MAX_PULSE = 2500
 
 # Servo positions
 PADDLE_OPEN    = 90.0   # neutral open position
-PADDLE_CLOSED  = 30.0   # inward closed (duck captured)
-PADDLE_EXTEND  = 150.0  # outward extended (release or knock)
+PADDLE_CLOSED  = 180.0   # inward closed (duck captured)
+PADDLE_EXTEND  = 30.0  # outward extended (release or knock)
 BUTTON_TAP     = 60.0   # partial close for button press
 CRANK_RETRACT  = 0.0
 CRANK_EXTEND   = 180.0

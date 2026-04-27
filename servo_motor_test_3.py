@@ -35,7 +35,7 @@ PWM_FREQUENCY_HZ = 50
 
 # Desired servo angle.
 # Usually safe range is 0 to 180 degrees.
-TARGET_ANGLE_DEGREES = 90
+TARGET_ANGLE_DEGREES = 5
 
 # How long to hold the PWM signal after moving.
 HOLD_SECONDS = 1.0
