@@ -90,7 +90,7 @@ source install/setup.bash
 ros2 launch robot_bringup robot_with_gamepad.launch.py \
   use_nav:=false \
   use_tcp_input:=true \
-  tcp_listen_host:=0.0.0.0 \
+  tcp_listen_host:=100.100.7.54 \
   tcp_listen_port:=5005
 ```
 
@@ -99,7 +99,7 @@ To run only the TCP receiver without the rest of the robot bringup:
 ```bash
 ros2 launch gamepad_controller gamepad_controller.launch.py \
   use_tcp_input:=true \
-  tcp_listen_host:=0.0.0.0 \
+  tcp_listen_host:=100.100.7.54 \
   tcp_listen_port:=5005
 ```
 
