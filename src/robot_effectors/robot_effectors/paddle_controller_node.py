@@ -14,8 +14,8 @@ angle to `paddle_active_angle` and then back.
 A `cooldown_seconds` parameter prevents re-triggering too fast.
 
 GPIO:
-    Paddle Left  → BCM pin 17  (default)
-    Paddle Right → BCM pin 27  (default)
+    Paddle Left  → BCM pin 23  (default)
+    Paddle Right → BCM pin 16  (default)
 
 DSServo PWM spec:
     Period:    20 ms  (50 Hz)
@@ -57,8 +57,8 @@ class PaddleControllerNode(Node):
         super().__init__("paddle_controller_node")
 
         # ── Parameters ────────────────────────────────────────────────────
-        self.declare_parameter("pin_left",               17)
-        self.declare_parameter("pin_right",              27)
+        self.declare_parameter("pin_left",               23)
+        self.declare_parameter("pin_right",              16)
         self.declare_parameter("neutral_angle_deg",      90.0)   # resting position
         self.declare_parameter("active_angle_deg",       45.0)   # swept-out position
         self.declare_parameter("sweep_duration_sec",      0.3)   # time to complete swing
@@ -219,7 +219,7 @@ class PaddleControllerNode(Node):
         if HW_AVAILABLE:
             if self._pwm_left:  self._pwm_left.stop()
             if self._pwm_right: self._pwm_right.stop()
-            GPIO.cleanup()
+            GPIO.cleanup([self.pin_left, self.pin_right])
         super().destroy_node()
 
 

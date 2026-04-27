@@ -5,8 +5,8 @@
 paddle_controller_node:
   ros__parameters:
     # GPIO pins
-    pin_left:  17
-    pin_right: 27
+    pin_left:  23
+    pin_right: 16
 
     # Servo angles (degrees)
     neutral_angle_deg: 90.0   # resting/default position
@@ -26,7 +26,7 @@ paddle_controller_node:
 crank_controller_node:
   ros__parameters:
     # GPIO pin
-    pin_crank: 4
+    pin_crank: 7
 
     # Servo angles (degrees)
     retracted_angle_deg:   0.0   # home / safe position

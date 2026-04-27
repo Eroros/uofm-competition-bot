@@ -14,7 +14,7 @@ When triggered, the crank sweeps:
     retracted (0°)  →  extended (180°)  →  retracted (0°)
 
 GPIO:
-    Crank servo → BCM pin 4  (default)
+    Crank servo → BCM pin 7  (default)
 
 DSServo PWM spec (same as paddles):
     50 Hz, 0.5–2.5 ms pulse → 0–180°
@@ -54,7 +54,7 @@ class CrankControllerNode(Node):
         super().__init__("crank_controller_node")
 
         # ── Parameters ────────────────────────────────────────────────────
-        self.declare_parameter("pin_crank",              4)
+        self.declare_parameter("pin_crank",              7)
         self.declare_parameter("retracted_angle_deg",    0.0)    # home position
         self.declare_parameter("extended_angle_deg",   180.0)    # deployed position
         self.declare_parameter("sweep_duration_sec",     0.6)    # full sweep time
@@ -210,7 +210,7 @@ class CrankControllerNode(Node):
         self._set_angle(self.retracted_deg)
         if HW_AVAILABLE:
             if self._pwm_crank: self._pwm_crank.stop()
-            GPIO.cleanup()
+            GPIO.cleanup(self.pin_crank)
         super().destroy_node()
 
 

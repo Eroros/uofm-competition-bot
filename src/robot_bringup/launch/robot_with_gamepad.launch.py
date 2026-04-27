@@ -40,7 +40,7 @@ def generate_launch_description():
         description="Launch RViz2",
     )
     use_effectors_arg = DeclareLaunchArgument(
-        "use_effectors", default_value="true",
+        "use_effectors", default_value="false",
         description="Launch effector servo stack",
     )
     max_linear_speed_arg = DeclareLaunchArgument(
