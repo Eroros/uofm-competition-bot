@@ -55,7 +55,7 @@ def clamp_angle(angle):
 
 def physical_angle(side, logical_angle):
     logical_angle = clamp_angle(logical_angle)
-    if side == "right":
+    if side == "left":
         return 180.0 - logical_angle
     return logical_angle
 
