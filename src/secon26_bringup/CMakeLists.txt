@@ -5,6 +5,14 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(rclpy REQUIRED)
 
+install(PROGRAMS scripts/tcs34725_driver.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME tcs34725_driver)
+
+install(PROGRAMS scripts/ky005_ir_driver.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME ky005_ir_driver)
+
 ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS scripts/tb6612_driver.py
