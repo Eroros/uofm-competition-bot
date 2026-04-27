@@ -90,7 +90,7 @@ source install/setup.bash
 ros2 launch robot_bringup robot_with_gamepad.launch.py \
   use_nav:=false \
   use_tcp_input:=true \
-  tcp_listen_host:=0.0.0.0 \
+  tcp_listen_host:=100.100.7.54 \
   tcp_listen_port:=5005
 ```
 
@@ -99,7 +99,7 @@ To run only the TCP receiver without the rest of the robot bringup:
 ```bash
 ros2 launch gamepad_controller gamepad_controller.launch.py \
   use_tcp_input:=true \
-  tcp_listen_host:=0.0.0.0 \
+  tcp_listen_host:=100.100.7.54 \
   tcp_listen_port:=5005
 ```
 
@@ -118,15 +118,15 @@ Run the sender from this repository on your laptop/dev PC:
 cd uofm-competition-bot
 
 # Interactive keyboard commands: forward, back, left, right, stop, quit
-python tcp_cmd_sender.py --host <PI_IP_ADDRESS> --port 5005
+python tcp_cmd_sender.py --host 100.100.7.54 --port 5005
 
 # Send one preset command and exit
-python tcp_cmd_sender.py --host <PI_IP_ADDRESS> --port 5005 --once forward
-python tcp_cmd_sender.py --host <PI_IP_ADDRESS> --port 5005 --once stop
+python tcp_cmd_sender.py --host 100.100.7.54 --port 5005 --once forward
+python tcp_cmd_sender.py --host 100.100.7.54 --port 5005 --once stop
 
 # Send live gamepad commands over TCP
 pip install inputs
-python tcp_cmd_sender.py --host <PI_IP_ADDRESS> --port 5005 --gamepad
+python tcp_cmd_sender.py --host 100.100.7.54 --port 5005 --gamepad
 ```
 
 If the sender prints `connection refused`, the IP is reachable but nothing is
