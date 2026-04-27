@@ -103,6 +103,21 @@ See [GAMEPAD_QUICK_START.md](GAMEPAD_QUICK_START.md) and [GAMEPAD_LAUNCH_GUIDE.m
 | Paddle Right | 16 | 36 | 90° |
 | Crank        | 7  | 26 | 0°  |
 
+### TCS3475 RGB
+| Signal | BCM | Physical Pin |
+|--------|-----|-------------|
+| VIN | - | 1 (5V rail) |
+| GND | - | 9 |
+| SDA | - | 3 (same as IMU) |
+| SCL | — | 5 (same as IMU) |
+
+### KY-005 IR Transmitter
+| Signal | BCM | Physical Pin |
+|--------|-----|-------------|
+| S | 4 | 7 |
+| VCC | - | 2 (5V rail) |
+| GND | - | 9 |
+
 ---
 
 ## Package Layout
